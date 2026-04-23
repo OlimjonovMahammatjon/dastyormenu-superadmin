@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from 'react-router';
+import { Outlet, NavLink, useNavigate } from 'react-router';
 import {
   LayoutDashboard,
   Store,
@@ -12,17 +12,25 @@ import {
 import { useState } from 'react';
 import { Button } from '../components/ui/button';
 import { cn } from '../components/ui/utils';
+import { toast } from 'sonner';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Restaurants', href: '/restaurants', icon: Store },
-  { name: 'Billing', href: '/billing', icon: CreditCard },
-  { name: 'Support', href: '/support', icon: HelpCircle },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Boshqaruv Paneli', href: '/', icon: LayoutDashboard },
+  { name: 'Restoranlar', href: '/restaurants', icon: Store },
+  { name: 'To\'lovlar', href: '/billing', icon: CreditCard },
+  { name: 'Yordam', href: '/support', icon: HelpCircle },
+  { name: 'Sozlamalar', href: '/settings', icon: Settings },
 ];
 
 export default function DashboardLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    toast.success('Tizimdan chiqdingiz');
+    navigate('/login');
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -80,10 +88,10 @@ export default function DashboardLayout() {
             {!sidebarCollapsed && (
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">Super Admin</p>
-                <p className="text-xs text-gray-500 truncate">admin@dastyor.com</p>
+                <p className="text-xs text-gray-500 truncate">admin@dastyor.uz</p>
               </div>
             )}
-            <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
+            <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0" onClick={handleLogout}>
               <LogOut className="h-4 w-4 text-gray-500" />
             </Button>
           </div>

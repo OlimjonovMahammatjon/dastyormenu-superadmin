@@ -8,168 +8,168 @@ import { toast } from 'sonner';
 
 export default function Settings() {
   const handleSaveGeneral = () => {
-    toast.success('General settings saved successfully');
+    toast.success('Umumiy sozlamalar saqlandi');
   };
 
   const handleSaveNotifications = () => {
-    toast.success('Notification preferences saved successfully');
+    toast.success('Bildirishnoma sozlamalari saqlandi');
   };
 
   const handleSaveSecurity = () => {
-    toast.success('Security settings updated successfully');
+    toast.success('Xavfsizlik sozlamalari yangilandi');
   };
 
   return (
     <div className="p-8 space-y-6 max-w-4xl">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-500 mt-1">Manage your platform configuration</p>
+        <h1 className="text-3xl font-bold text-gray-900">Sozlamalar</h1>
+        <p className="text-gray-500 mt-1">Platforma sozlamalarini boshqaring</p>
       </div>
 
       {/* General Settings */}
       <Card>
         <CardHeader>
-          <CardTitle>General Settings</CardTitle>
-          <CardDescription>Configure basic platform settings</CardDescription>
+          <CardTitle>Umumiy Sozlamalar</CardTitle>
+          <CardDescription>Asosiy platforma sozlamalarini sozlang</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="platform-name">Platform Name</Label>
+              <Label htmlFor="platform-name">Platforma Nomi</Label>
               <Input id="platform-name" defaultValue="Dastyor" />
             </div>
             <div>
-              <Label htmlFor="support-email">Support Email</Label>
-              <Input id="support-email" type="email" defaultValue="support@dastyor.com" />
+              <Label htmlFor="support-email">Yordam Email</Label>
+              <Input id="support-email" type="email" defaultValue="yordam@dastyor.uz" />
             </div>
           </div>
           <div>
-            <Label htmlFor="company-address">Company Address</Label>
-            <Input id="company-address" defaultValue="Kabul, Afghanistan" />
+            <Label htmlFor="company-address">Kompaniya Manzili</Label>
+            <Input id="company-address" defaultValue="Toshkent, O'zbekiston" />
           </div>
           <div>
-            <Label htmlFor="contact-number">Contact Number</Label>
-            <Input id="contact-number" defaultValue="+93 (0) 700 123 456" />
+            <Label htmlFor="contact-number">Aloqa Raqami</Label>
+            <Input id="contact-number" defaultValue="+998 (90) 123 45 67" />
           </div>
-          <Button onClick={handleSaveGeneral}>Save General Settings</Button>
+          <Button onClick={handleSaveGeneral}>Umumiy Sozlamalarni Saqlash</Button>
         </CardContent>
       </Card>
 
       {/* Notification Settings */}
       <Card>
         <CardHeader>
-          <CardTitle>Notification Preferences</CardTitle>
-          <CardDescription>Control how you receive notifications</CardDescription>
+          <CardTitle>Bildirishnoma Sozlamalari</CardTitle>
+          <CardDescription>Bildirishnomalarni qanday qabul qilishni boshqaring</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <Label>Email Notifications</Label>
-              <p className="text-sm text-gray-500">Receive email alerts for important events</p>
+              <Label>Email Bildirishnomalar</Label>
+              <p className="text-sm text-gray-500">Muhim voqealar uchun email ogohlantirishlari</p>
             </div>
             <Switch defaultChecked />
           </div>
           <Separator />
           <div className="flex items-center justify-between">
             <div>
-              <Label>New Restaurant Registration</Label>
-              <p className="text-sm text-gray-500">Get notified when a new restaurant joins</p>
+              <Label>Yangi Restoran Ro'yxatdan O'tishi</Label>
+              <p className="text-sm text-gray-500">Yangi restoran qo'shilganda xabar olish</p>
             </div>
             <Switch defaultChecked />
           </div>
           <Separator />
           <div className="flex items-center justify-between">
             <div>
-              <Label>Payment Notifications</Label>
-              <p className="text-sm text-gray-500">Alerts for successful and failed payments</p>
+              <Label>To'lov Bildirishnomalari</Label>
+              <p className="text-sm text-gray-500">Muvaffaqiyatli va muvaffaqiyatsiz to'lovlar haqida</p>
             </div>
             <Switch defaultChecked />
           </div>
           <Separator />
           <div className="flex items-center justify-between">
             <div>
-              <Label>Support Ticket Alerts</Label>
-              <p className="text-sm text-gray-500">Notifications for new support tickets</p>
+              <Label>Yordam So'rovlari Ogohlantirishlari</Label>
+              <p className="text-sm text-gray-500">Yangi yordam so'rovlari uchun bildirishnomalar</p>
             </div>
             <Switch />
           </div>
           <Separator />
           <div className="flex items-center justify-between">
             <div>
-              <Label>System Health Alerts</Label>
-              <p className="text-sm text-gray-500">Critical system errors and warnings</p>
+              <Label>Tizim Holati Ogohlantirishlari</Label>
+              <p className="text-sm text-gray-500">Muhim tizim xatoliklari va ogohlantirishlar</p>
             </div>
             <Switch defaultChecked />
           </div>
-          <Button onClick={handleSaveNotifications}>Save Notification Settings</Button>
+          <Button onClick={handleSaveNotifications}>Bildirishnoma Sozlamalarini Saqlash</Button>
         </CardContent>
       </Card>
 
       {/* Security Settings */}
       <Card>
         <CardHeader>
-          <CardTitle>Security Settings</CardTitle>
-          <CardDescription>Manage account security and access control</CardDescription>
+          <CardTitle>Xavfsizlik Sozlamalari</CardTitle>
+          <CardDescription>Hisob xavfsizligi va kirish nazoratini boshqaring</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <Label>Two-Factor Authentication</Label>
-              <p className="text-sm text-gray-500">Add an extra layer of security</p>
+              <Label>Ikki Bosqichli Autentifikatsiya</Label>
+              <p className="text-sm text-gray-500">Qo'shimcha xavfsizlik qatlami qo'shing</p>
             </div>
             <Switch />
           </div>
           <Separator />
           <div className="flex items-center justify-between">
             <div>
-              <Label>Session Timeout</Label>
-              <p className="text-sm text-gray-500">Auto logout after 30 minutes of inactivity</p>
+              <Label>Sessiya Vaqti Tugashi</Label>
+              <p className="text-sm text-gray-500">30 daqiqa faoliyatsizlikdan keyin avtomatik chiqish</p>
             </div>
             <Switch defaultChecked />
           </div>
           <Separator />
           <div>
-            <Label htmlFor="current-password">Current Password</Label>
-            <Input id="current-password" type="password" placeholder="Enter current password" />
+            <Label htmlFor="current-password">Joriy Parol</Label>
+            <Input id="current-password" type="password" placeholder="Joriy parolni kiriting" />
           </div>
           <div>
-            <Label htmlFor="new-password">New Password</Label>
-            <Input id="new-password" type="password" placeholder="Enter new password" />
+            <Label htmlFor="new-password">Yangi Parol</Label>
+            <Input id="new-password" type="password" placeholder="Yangi parolni kiriting" />
           </div>
           <div>
-            <Label htmlFor="confirm-password">Confirm New Password</Label>
-            <Input id="confirm-password" type="password" placeholder="Confirm new password" />
+            <Label htmlFor="confirm-password">Yangi Parolni Tasdiqlang</Label>
+            <Input id="confirm-password" type="password" placeholder="Yangi parolni tasdiqlang" />
           </div>
-          <Button onClick={handleSaveSecurity}>Update Password</Button>
+          <Button onClick={handleSaveSecurity}>Parolni Yangilash</Button>
         </CardContent>
       </Card>
 
       {/* API Settings */}
       <Card>
         <CardHeader>
-          <CardTitle>API Configuration</CardTitle>
-          <CardDescription>Manage API keys and integrations</CardDescription>
+          <CardTitle>API Sozlamalari</CardTitle>
+          <CardDescription>API kalitlari va integratsiyalarni boshqaring</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="api-key">Master API Key</Label>
+            <Label htmlFor="api-key">Asosiy API Kaliti</Label>
             <Input
               id="api-key"
               type="password"
               defaultValue="sk_live_abc123xyz789"
               readOnly
             />
-            <p className="text-xs text-gray-500 mt-1">This key grants full access to your platform API</p>
+            <p className="text-xs text-gray-500 mt-1">Bu kalit platforma API ga to'liq kirish huquqini beradi</p>
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <Label>Webhook Notifications</Label>
-              <p className="text-sm text-gray-500">Send webhooks for platform events</p>
+              <Label>Webhook Bildirishnomalari</Label>
+              <p className="text-sm text-gray-500">Platforma voqealari uchun webhook yuborish</p>
             </div>
             <Switch defaultChecked />
           </div>
-          <Button variant="outline">Regenerate API Key</Button>
+          <Button variant="outline">API Kalitini Qayta Yaratish</Button>
         </CardContent>
       </Card>
     </div>

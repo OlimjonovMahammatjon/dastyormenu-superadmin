@@ -19,10 +19,22 @@ const priorityColors = {
   High: 'bg-red-100 text-red-700'
 };
 
+const priorityLabels = {
+  Low: 'Past',
+  Medium: 'O\'rta',
+  High: 'Yuqori'
+};
+
 const ticketStatusColors = {
   Open: 'bg-blue-100 text-blue-700',
   'In Progress': 'bg-yellow-100 text-yellow-700',
   Resolved: 'bg-green-100 text-green-700'
+};
+
+const ticketStatusLabels = {
+  Open: 'Ochiq',
+  'In Progress': 'Jarayonda',
+  Resolved: 'Hal qilindi'
 };
 
 const logTypeIcons = {
@@ -37,6 +49,12 @@ const logTypeColors = {
   Error: 'text-red-600'
 };
 
+const logTypeLabels = {
+  Info: 'Ma\'lumot',
+  Warning: 'Ogohlantirish',
+  Error: 'Xatolik'
+};
+
 export default function Support() {
   const [tickets] = useState(mockSupportTickets);
   const [logs] = useState(mockSystemLogs);
@@ -49,8 +67,8 @@ export default function Support() {
     <div className="p-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Support & System Logs</h1>
-        <p className="text-gray-500 mt-1">Monitor support tickets and system health</p>
+        <h1 className="text-3xl font-bold text-gray-900">Yordam va Tizim Jurnallari</h1>
+        <p className="text-gray-500 mt-1">Yordam so'rovlari va tizim holatini kuzating</p>
       </div>
 
       {/* Ticket Stats */}
@@ -59,7 +77,7 @@ export default function Support() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Open Tickets</p>
+                <p className="text-sm text-gray-600">Ochiq So'rovlar</p>
                 <p className="text-2xl font-bold text-gray-900">{openTickets}</p>
               </div>
               <div className="p-3 rounded-lg bg-blue-50">
@@ -73,7 +91,7 @@ export default function Support() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">In Progress</p>
+                <p className="text-sm text-gray-600">Jarayonda</p>
                 <p className="text-2xl font-bold text-gray-900">{inProgressTickets}</p>
               </div>
               <div className="p-3 rounded-lg bg-yellow-50">
@@ -87,7 +105,7 @@ export default function Support() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Resolved</p>
+                <p className="text-sm text-gray-600">Hal Qilindi</p>
                 <p className="text-2xl font-bold text-gray-900">{resolvedTickets}</p>
               </div>
               <div className="p-3 rounded-lg bg-green-50">
@@ -101,25 +119,25 @@ export default function Support() {
       {/* Tabs */}
       <Tabs defaultValue="tickets" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="tickets">Support Tickets</TabsTrigger>
-          <TabsTrigger value="logs">System Logs</TabsTrigger>
+          <TabsTrigger value="tickets">Yordam So'rovlari</TabsTrigger>
+          <TabsTrigger value="logs">Tizim Jurnallari</TabsTrigger>
         </TabsList>
 
         <TabsContent value="tickets" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Support Tickets</CardTitle>
+              <CardTitle>Yordam So'rovlari</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Ticket ID</TableHead>
-                    <TableHead>Restaurant</TableHead>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created At</TableHead>
+                    <TableHead>So'rov ID</TableHead>
+                    <TableHead>Restoran</TableHead>
+                    <TableHead>Mavzu</TableHead>
+                    <TableHead>Muhimlik</TableHead>
+                    <TableHead>Holat</TableHead>
+                    <TableHead>Yaratilgan</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -133,7 +151,7 @@ export default function Support() {
                           className={priorityColors[ticket.priority]}
                           variant="secondary"
                         >
-                          {ticket.priority}
+                          {priorityLabels[ticket.priority]}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -141,11 +159,11 @@ export default function Support() {
                           className={ticketStatusColors[ticket.status]}
                           variant="secondary"
                         >
-                          {ticket.status}
+                          {ticketStatusLabels[ticket.status]}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {new Date(ticket.createdAt).toLocaleString()}
+                        {new Date(ticket.createdAt).toLocaleString('uz-UZ')}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -158,7 +176,7 @@ export default function Support() {
         <TabsContent value="logs" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>System Health Logs</CardTitle>
+              <CardTitle>Tizim Holati Jurnallari</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -174,11 +192,11 @@ export default function Support() {
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-sm font-medium text-gray-900">{log.message}</p>
                           <Badge variant="outline" className="flex-shrink-0">
-                            {log.type}
+                            {logTypeLabels[log.type]}
                           </Badge>
                         </div>
                         <p className="text-xs text-gray-500 mt-1">
-                          {new Date(log.timestamp).toLocaleString()}
+                          {new Date(log.timestamp).toLocaleString('uz-UZ')}
                         </p>
                       </div>
                     </div>

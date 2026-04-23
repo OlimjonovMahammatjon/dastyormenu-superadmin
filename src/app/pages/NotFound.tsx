@@ -13,13 +13,13 @@ export default function NotFound() {
         </div>
         <div>
           <h1 className="text-6xl font-bold text-gray-900">404</h1>
-          <p className="text-xl text-gray-600 mt-2">Page Not Found</p>
+          <p className="text-xl text-gray-600 mt-2">Sahifa Topilmadi</p>
           <p className="text-gray-500 mt-2">
-            The page you are looking for doesn't exist or has been moved.
+            Siz qidirayotgan sahifa mavjud emas yoki ko'chirilgan.
           </p>
         </div>
         <Link to="/">
-          <Button>Go Back to Dashboard</Button>
+          <Button>Boshqaruv Paneliga Qaytish</Button>
         </Link>
       </div>
     </div>

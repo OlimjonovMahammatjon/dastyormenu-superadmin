@@ -37,16 +37,28 @@ const statusColors = {
   Failed: 'bg-red-100 text-red-700'
 };
 
+const statusLabels = {
+  Completed: 'Bajarildi',
+  Pending: 'Kutilmoqda',
+  Failed: 'Xatolik'
+};
+
 const tierPricing = {
   Basic: 999,
   Pro: 1800,
   Premium: 2900
 };
 
+const tierLabels = {
+  Basic: 'Oddiy',
+  Pro: 'Professional',
+  Premium: 'Premium'
+};
+
 const tierFeatures = {
-  Basic: ['Up to 50 orders/month', 'Basic analytics', 'Email support'],
-  Pro: ['Up to 200 orders/month', 'Advanced analytics', 'Priority support', 'Inventory management'],
-  Premium: ['Unlimited orders', 'Real-time analytics', '24/7 support', 'Multi-location', 'API access']
+  Basic: ['Oyiga 50 tagacha buyurtma', 'Asosiy statistika', 'Email yordam'],
+  Pro: ['Oyiga 200 tagacha buyurtma', 'Kengaytirilgan statistika', 'Ustuvor yordam', 'Inventar boshqaruvi'],
+  Premium: ['Cheksiz buyurtmalar', 'Real-vaqt statistika', '24/7 yordam', 'Ko\'p filial', 'API kirish']
 };
 
 export default function Billing() {
@@ -64,7 +76,7 @@ export default function Billing() {
 
   const handleSaveTierConfig = () => {
     setIsConfigDialogOpen(false);
-    toast.success(`${selectedTier} tier configuration updated`);
+    toast.success(`${tierLabels[selectedTier as keyof typeof tierLabels]} obuna sozlamalari yangilandi`);
   };
 
   return (
@@ -72,36 +84,36 @@ export default function Billing() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Billing & Subscriptions</h1>
-          <p className="text-gray-500 mt-1">Manage transactions and subscription tiers</p>
+          <h1 className="text-3xl font-bold text-gray-900">To'lovlar va Obunalar</h1>
+          <p className="text-gray-500 mt-1">Tranzaksiyalar va obuna turlarini boshqaring</p>
         </div>
         <Dialog open={isConfigDialogOpen} onOpenChange={setIsConfigDialogOpen}>
           <DialogTrigger asChild>
-            <Button>Configure Tiers</Button>
+            <Button>Obunalarni Sozlash</Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Subscription Tier Configuration</DialogTitle>
+              <DialogTitle>Obuna Turlari Sozlamalari</DialogTitle>
               <DialogDescription>
-                Define features and pricing for each subscription tier
+                Har bir obuna turi uchun xususiyatlar va narxlarni belgilang
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 pt-4">
               <div>
-                <Label>Select Tier</Label>
+                <Label>Obuna Turini Tanlang</Label>
                 <Select value={selectedTier} onValueChange={setSelectedTier}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Basic">Basic - ${tierPricing.Basic}/month</SelectItem>
-                    <SelectItem value="Pro">Pro - ${tierPricing.Pro}/month</SelectItem>
-                    <SelectItem value="Premium">Premium - ${tierPricing.Premium}/month</SelectItem>
+                    <SelectItem value="Basic">Oddiy - {tierPricing.Basic} so'm/oy</SelectItem>
+                    <SelectItem value="Pro">Professional - {tierPricing.Pro} so'm/oy</SelectItem>
+                    <SelectItem value="Premium">Premium - {tierPricing.Premium} so'm/oy</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label>Features for {selectedTier} Tier</Label>
+                <Label>{tierLabels[selectedTier as keyof typeof tierLabels]} Obuna Xususiyatlari</Label>
                 <div className="mt-2 space-y-2">
                   {tierFeatures[selectedTier as keyof typeof tierFeatures].map((feature, index) => (
                     <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
@@ -111,7 +123,7 @@ export default function Billing() {
                 </div>
               </div>
               <Button onClick={handleSaveTierConfig} className="w-full">
-                Save Configuration
+                Sozlamalarni Saqlash
               </Button>
             </div>
           </DialogContent>
@@ -124,8 +136,8 @@ export default function Billing() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">${totalRevenue.toLocaleString()}</p>
+                <p className="text-sm text-gray-600">Jami Daromad</p>
+                <p className="text-2xl font-bold text-gray-900">{totalRevenue.toLocaleString()} so'm</p>
               </div>
               <div className="p-3 rounded-lg bg-green-50">
                 <DollarSign className="h-6 w-6 text-green-600" />
@@ -138,8 +150,8 @@ export default function Billing() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Pending Payments</p>
-                <p className="text-2xl font-bold text-gray-900">${pendingRevenue.toLocaleString()}</p>
+                <p className="text-sm text-gray-600">Kutilayotgan To'lovlar</p>
+                <p className="text-2xl font-bold text-gray-900">{pendingRevenue.toLocaleString()} so'm</p>
               </div>
               <div className="p-3 rounded-lg bg-yellow-50">
                 <CreditCard className="h-6 w-6 text-yellow-600" />
@@ -152,7 +164,7 @@ export default function Billing() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Total Transactions</p>
+                <p className="text-sm text-gray-600">Jami Tranzaksiyalar</p>
                 <p className="text-2xl font-bold text-gray-900">{transactions.length}</p>
               </div>
               <div className="p-3 rounded-lg bg-blue-50">
@@ -166,11 +178,11 @@ export default function Billing() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">This Month</p>
+                <p className="text-sm text-gray-600">Shu Oy</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  ${transactions.filter(t => t.status === 'Completed').length > 0
+                  {transactions.filter(t => t.status === 'Completed').length > 0
                     ? Math.round(totalRevenue / transactions.filter(t => t.status === 'Completed').length * 12).toLocaleString()
-                    : 0}
+                    : 0} so'm
                 </p>
               </div>
               <div className="p-3 rounded-lg bg-purple-50">
@@ -183,14 +195,14 @@ export default function Billing() {
 
       {/* Subscription Tiers Overview */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Subscription Tiers</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Obuna Turlari</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {Object.entries(tierPricing).map(([tier, price]) => (
             <Card key={tier} className="border-2">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  <span>{tier}</span>
-                  <Badge variant="outline">${price}/mo</Badge>
+                  <span>{tierLabels[tier as keyof typeof tierLabels]}</span>
+                  <Badge variant="outline">{price} so'm/oy</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -210,17 +222,17 @@ export default function Billing() {
 
       {/* Transaction History */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Transaction History</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Tranzaksiyalar Tarixi</h2>
         <div className="bg-white rounded-lg border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Transaction ID</TableHead>
-                <TableHead>Restaurant</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Tier</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Tranzaksiya ID</TableHead>
+                <TableHead>Restoran</TableHead>
+                <TableHead>Summa</TableHead>
+                <TableHead>Obuna</TableHead>
+                <TableHead>Sana</TableHead>
+                <TableHead>Holat</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -228,17 +240,17 @@ export default function Billing() {
                 <TableRow key={transaction.id}>
                   <TableCell className="font-mono text-sm">{transaction.id}</TableCell>
                   <TableCell className="font-medium">{transaction.restaurantName}</TableCell>
-                  <TableCell className="font-semibold">${transaction.amount.toLocaleString()}</TableCell>
+                  <TableCell className="font-semibold">{transaction.amount.toLocaleString()} so'm</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{transaction.tier}</Badge>
+                    <Badge variant="outline">{tierLabels[transaction.tier as keyof typeof tierLabels]}</Badge>
                   </TableCell>
-                  <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(transaction.date).toLocaleDateString('uz-UZ')}</TableCell>
                   <TableCell>
                     <Badge
                       className={statusColors[transaction.status]}
                       variant="secondary"
                     >
-                      {transaction.status}
+                      {statusLabels[transaction.status]}
                     </Badge>
                   </TableCell>
                 </TableRow>

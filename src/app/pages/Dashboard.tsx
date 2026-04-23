@@ -42,8 +42,8 @@ export default function Dashboard() {
 
   const stats = [
     {
-      title: 'Total Revenue (MRR)',
-      value: `$${analytics.totalRevenue.toLocaleString()}`,
+      title: 'Jami Daromad (Oylik)',
+      value: `${analytics.totalRevenue.toLocaleString()} so'm`,
       change: '+12.5%',
       trend: 'up',
       icon: DollarSign,
@@ -51,25 +51,25 @@ export default function Dashboard() {
       bgColor: 'bg-green-50'
     },
     {
-      title: 'Total Restaurants',
+      title: 'Jami Restoranlar',
       value: analytics.totalRestaurants,
-      change: '+3 this month',
+      change: '+3 shu oyda',
       trend: 'up',
       icon: Store,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50'
     },
     {
-      title: 'Active Subscriptions',
+      title: 'Faol Obunalar',
       value: analytics.activeSubscriptions,
-      change: `${analytics.totalRestaurants - analytics.activeSubscriptions} inactive`,
+      change: `${analytics.totalRestaurants - analytics.activeSubscriptions} nofaol`,
       trend: 'neutral',
       icon: CreditCard,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50'
     },
     {
-      title: 'Total Orders Processed',
+      title: 'Jami Buyurtmalar',
       value: analytics.totalOrders.toLocaleString(),
       change: '+8.2%',
       trend: 'up',
@@ -83,8 +83,8 @@ export default function Dashboard() {
     <div className="p-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Welcome to Dastyor Super Admin Panel</p>
+        <h1 className="text-3xl font-bold text-gray-900">Boshqaruv Paneli</h1>
+        <p className="text-gray-500 mt-1">Dastyor Super Admin Paneliga xush kelibsiz</p>
       </div>
 
       {/* Stats Grid */}
@@ -118,7 +118,7 @@ export default function Dashboard() {
         {/* Revenue Growth Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Revenue Growth (Last 12 Months)</CardTitle>
+            <CardTitle>Daromad O'sishi (So'nggi 12 Oy)</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -128,7 +128,7 @@ export default function Dashboard() {
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
-                  formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
+                  formatter={(value: number) => [`${value.toLocaleString()} so'm`, 'Daromad']}
                 />
                 <Line
                   type="monotone"
@@ -145,7 +145,7 @@ export default function Dashboard() {
         {/* Top Performing Restaurants */}
         <Card>
           <CardHeader>
-            <CardTitle>Top 5 Performing Restaurants</CardTitle>
+            <CardTitle>Eng Yaxshi 5 Restoran</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -155,7 +155,7 @@ export default function Dashboard() {
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
-                  formatter={(value: number) => [value.toLocaleString(), 'Orders']}
+                  formatter={(value: number) => [value.toLocaleString(), 'Buyurtmalar']}
                 />
                 <Bar dataKey="orders" fill="#2563eb" radius={[8, 8, 0, 0]} />
               </BarChart>
@@ -166,7 +166,7 @@ export default function Dashboard() {
         {/* Subscription Distribution */}
         <Card>
           <CardHeader>
-            <CardTitle>Subscription Tier Distribution</CardTitle>
+            <CardTitle>Obuna Turlari Taqsimoti</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -195,27 +195,27 @@ export default function Dashboard() {
         {/* Quick Stats */}
         <Card>
           <CardHeader>
-            <CardTitle>Quick Insights</CardTitle>
+            <CardTitle>Tezkor Ma'lumotlar</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between pb-4 border-b">
-              <span className="text-sm text-gray-600">Average Revenue per Restaurant</span>
+              <span className="text-sm text-gray-600">O'rtacha Daromad (Restoran)</span>
               <span className="text-lg font-semibold text-gray-900">
-                ${Math.round(analytics.totalRevenue / analytics.totalRestaurants).toLocaleString()}
+                {Math.round(analytics.totalRevenue / analytics.totalRestaurants).toLocaleString()} so'm
               </span>
             </div>
             <div className="flex items-center justify-between pb-4 border-b">
-              <span className="text-sm text-gray-600">Average Orders per Restaurant</span>
+              <span className="text-sm text-gray-600">O'rtacha Buyurtmalar (Restoran)</span>
               <span className="text-lg font-semibold text-gray-900">
                 {Math.round(analytics.totalOrders / analytics.totalRestaurants).toLocaleString()}
               </span>
             </div>
             <div className="flex items-center justify-between pb-4 border-b">
-              <span className="text-sm text-gray-600">Subscription Renewal Rate</span>
+              <span className="text-sm text-gray-600">Obuna Yangilanish Darajasi</span>
               <span className="text-lg font-semibold text-green-600">94.2%</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Customer Satisfaction</span>
+              <span className="text-sm text-gray-600">Mijozlar Qoniqishi</span>
               <span className="text-lg font-semibold text-green-600">4.8/5.0</span>
             </div>
           </CardContent>
