@@ -80,12 +80,12 @@ export default function Billing() {
   };
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-8 space-y-6 bg-slate-50 dark:bg-[#121828] min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">To'lovlar va Obunalar</h1>
-          <p className="text-gray-500 mt-1">Tranzaksiyalar va obuna turlarini boshqaring</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">To'lovlar va Obunalar</h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-1">Tranzaksiyalar va obuna turlarini boshqaring</p>
         </div>
         <Dialog open={isConfigDialogOpen} onOpenChange={setIsConfigDialogOpen}>
           <DialogTrigger asChild>
@@ -132,12 +132,12 @@ export default function Billing() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
+        <Card className="bg-white dark:bg-[#1a2332] border-slate-200 dark:border-[#2a3441] hover:bg-slate-50 dark:hover:bg-[#1d2c47] transition-all">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Jami Daromad</p>
-                <p className="text-2xl font-bold text-gray-900">{totalRevenue.toLocaleString()} so'm</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Jami Daromad</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{totalRevenue.toLocaleString()} so'm</p>
               </div>
               <div className="p-3 rounded-lg bg-green-50">
                 <DollarSign className="h-6 w-6 text-green-600" />
@@ -146,12 +146,12 @@ export default function Billing() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white dark:bg-[#0f1419] border-slate-200 dark:border-[#1e2530]">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Kutilayotgan To'lovlar</p>
-                <p className="text-2xl font-bold text-gray-900">{pendingRevenue.toLocaleString()} so'm</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Kutilayotgan To'lovlar</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{pendingRevenue.toLocaleString()} so'm</p>
               </div>
               <div className="p-3 rounded-lg bg-yellow-50">
                 <CreditCard className="h-6 w-6 text-yellow-600" />
@@ -160,12 +160,12 @@ export default function Billing() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white dark:bg-[#0f1419] border-slate-200 dark:border-[#1e2530]">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Jami Tranzaksiyalar</p>
-                <p className="text-2xl font-bold text-gray-900">{transactions.length}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Jami Tranzaksiyalar</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{transactions.length}</p>
               </div>
               <div className="p-3 rounded-lg bg-blue-50">
                 <TrendingUp className="h-6 w-6 text-blue-600" />
@@ -174,12 +174,12 @@ export default function Billing() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white dark:bg-[#0f1419] border-slate-200 dark:border-[#1e2530]">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Shu Oy</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-slate-600 dark:text-slate-400">Shu Oy</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
                   {transactions.filter(t => t.status === 'Completed').length > 0
                     ? Math.round(totalRevenue / transactions.filter(t => t.status === 'Completed').length * 12).toLocaleString()
                     : 0} so'm
@@ -195,10 +195,10 @@ export default function Billing() {
 
       {/* Subscription Tiers Overview */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Obuna Turlari</h2>
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">Obuna Turlari</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {Object.entries(tierPricing).map(([tier, price]) => (
-            <Card key={tier} className="border-2">
+            <Card key={tier} className="bg-white dark:bg-[#1a2332] border-2 border-slate-200 dark:border-[#2a3441] hover:bg-slate-50 dark:hover:bg-[#1d2c47] transition-all">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>{tierLabels[tier as keyof typeof tierLabels]}</span>
@@ -208,8 +208,8 @@ export default function Billing() {
               <CardContent>
                 <ul className="space-y-2">
                   {tierFeatures[tier as keyof typeof tierFeatures].map((feature, index) => (
-                    <li key={index} className="flex items-center gap-2 text-sm text-gray-700">
-                      <span className="text-blue-600">✓</span>
+                    <li key={index} className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                      <span className="text-blue-600 dark:text-blue-400">✓</span>
                       {feature}
                     </li>
                   ))}
@@ -222,8 +222,8 @@ export default function Billing() {
 
       {/* Transaction History */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Tranzaksiyalar Tarixi</h2>
-        <div className="bg-white rounded-lg border">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">Tranzaksiyalar Tarixi</h2>
+        <div className="bg-white dark:bg-[#1a2332] rounded-lg border border-slate-200 dark:border-[#2a3441]">
           <Table>
             <TableHeader>
               <TableRow>

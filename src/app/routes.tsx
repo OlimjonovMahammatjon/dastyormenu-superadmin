@@ -5,6 +5,7 @@ import RestaurantsNew from './pages/RestaurantsNew';
 import Billing from './pages/Billing';
 import Support from './pages/Support';
 import Settings from './pages/Settings';
+import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 
@@ -32,6 +33,7 @@ export const router = createBrowserRouter([
       { path: 'billing', Component: Billing },
       { path: 'support', Component: Support },
       { path: 'settings', Component: Settings },
+      { path: 'profile', Component: Profile },
       { path: '*', Component: NotFound },
     ],
   },

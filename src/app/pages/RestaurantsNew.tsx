@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { mockRestaurants, Restaurant, RestaurantStatus } from '../../lib/mock-data';
-import { supabase } from '../../lib/supabase';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
@@ -64,7 +63,6 @@ const tierColors = {
 
 export default function RestaurantsNew() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -78,46 +76,21 @@ export default function RestaurantsNew() {
     tier: 'Basic' as const
   });
 
-  // Supabase dan restoranlarni yuklash
+  // LocalStorage dan restoranlarni yuklash
   useEffect(() => {
-    loadRestaurants();
+    const savedRestaurants = localStorage.getItem('restaurants');
+    if (savedRestaurants) {
+      setRestaurants(JSON.parse(savedRestaurants));
+    } else {
+      setRestaurants(mockRestaurants);
+      localStorage.setItem('restaurants', JSON.stringify(mockRestaurants));
+    }
   }, []);
 
-  const loadRestaurants = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('restaurants')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error loading restaurants:', error);
-        // Agar xatolik bo'lsa, mock data ishlatamiz
-        setRestaurants(mockRestaurants);
-        toast.error('Ma\'lumotlarni yuklashda xatolik, demo ma\'lumotlar ko\'rsatilmoqda');
-      } else if (data) {
-        // Supabase formatidan bizning formatga o'tkazish
-        const formattedData: Restaurant[] = data.map(item => ({
-          id: item.id,
-          name: item.name,
-          owner: item.owner,
-          ownerEmail: item.owner_email,
-          location: item.location,
-          joinDate: item.join_date,
-          status: item.status as RestaurantStatus,
-          tier: item.tier,
-          expiryDate: item.expiry_date,
-          monthlyRevenue: item.monthly_revenue || 0,
-          totalOrders: item.total_orders || 0
-        }));
-        setRestaurants(formattedData);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setRestaurants(mockRestaurants);
-    } finally {
-      setIsLoading(false);
-    }
+  // Restoranlarni saqlash
+  const saveRestaurants = (updatedRestaurants: Restaurant[]) => {
+    setRestaurants(updatedRestaurants);
+    localStorage.setItem('restaurants', JSON.stringify(updatedRestaurants));
   };
 
   // Filter restaurants
@@ -128,66 +101,36 @@ export default function RestaurantsNew() {
     return matchesSearch && matchesStatus;
   });
 
-  const handleAddRestaurant = async () => {
+  const handleAddRestaurant = () => {
     if (!newRestaurant.name || !newRestaurant.owner || !newRestaurant.ownerEmail || !newRestaurant.location) {
       toast.error('Iltimos, barcha maydonlarni to\'ldiring');
       return;
     }
 
-    try {
-      const { data, error } = await supabase
-        .from('restaurants')
-        .insert([
-          {
-            name: newRestaurant.name,
-            owner: newRestaurant.owner,
-            owner_email: newRestaurant.ownerEmail,
-            location: newRestaurant.location,
-            tier: newRestaurant.tier,
-            status: 'Active',
-            join_date: new Date().toISOString().split('T')[0],
-            expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            monthly_revenue: 0,
-            total_orders: 0
-          }
-        ])
-        .select();
-
-      if (error) {
-        console.error('Error adding restaurant:', error);
-        toast.error('Restoran qo\'shishda xatolik yuz berdi');
-      } else if (data) {
-        await loadRestaurants();
-        setIsAddDialogOpen(false);
-        setNewRestaurant({ name: '', owner: '', ownerEmail: '', location: '', tier: 'Basic' });
-        toast.success(`"${newRestaurant.name}" muvaffaqiyatli qo'shildi`);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('Restoran qo\'shishda xatolik yuz berdi');
-    }
+    const restaurant: Restaurant = {
+      id: `${Date.now()}`,
+      ...newRestaurant,
+      joinDate: new Date().toISOString().split('T')[0],
+      status: 'Active',
+      expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      monthlyRevenue: 0,
+      totalOrders: 0
+    };
+    
+    const updatedRestaurants = [...restaurants, restaurant];
+    saveRestaurants(updatedRestaurants);
+    setIsAddDialogOpen(false);
+    setNewRestaurant({ name: '', owner: '', ownerEmail: '', location: '', tier: 'Basic' });
+    toast.success(`"${restaurant.name}" muvaffaqiyatli qo'shildi`);
   };
 
-  const handleToggleStatus = async (restaurant: Restaurant) => {
+  const handleToggleStatus = (restaurant: Restaurant) => {
     const newStatus: RestaurantStatus = restaurant.status === 'Active' ? 'Suspended' : 'Active';
-    
-    try {
-      const { error } = await supabase
-        .from('restaurants')
-        .update({ status: newStatus })
-        .eq('id', restaurant.id);
-
-      if (error) {
-        console.error('Error updating status:', error);
-        toast.error('Holatni o\'zgartirishda xatolik');
-      } else {
-        await loadRestaurants();
-        toast.success(`"${restaurant.name}" ${newStatus === 'Active' ? 'faollashtirildi' : 'to\'xtatildi'}`);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('Holatni o\'zgartirishda xatolik');
-    }
+    const updatedRestaurants = restaurants.map(r =>
+      r.id === restaurant.id ? { ...r, status: newStatus } : r
+    );
+    saveRestaurants(updatedRestaurants);
+    toast.success(`"${restaurant.name}" ${newStatus === 'Active' ? 'faollashtirildi' : 'to\'xtatildi'}`);
   };
 
   const handleLoginAs = (restaurant: Restaurant) => {
@@ -201,40 +144,24 @@ export default function RestaurantsNew() {
     setIsEditDialogOpen(true);
   };
 
-  const saveEdit = async () => {
-    if (!selectedRestaurant) return;
-
-    try {
-      const { error } = await supabase
-        .from('restaurants')
-        .update({
-          name: selectedRestaurant.name,
-          location: selectedRestaurant.location,
-          tier: selectedRestaurant.tier
-        })
-        .eq('id', selectedRestaurant.id);
-
-      if (error) {
-        console.error('Error updating restaurant:', error);
-        toast.error('Restoranni yangilashda xatolik');
-      } else {
-        await loadRestaurants();
-        setIsEditDialogOpen(false);
-        toast.success(`"${selectedRestaurant.name}" yangilandi`);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('Restoranni yangilashda xatolik');
+  const saveEdit = () => {
+    if (selectedRestaurant) {
+      const updatedRestaurants = restaurants.map(r =>
+        r.id === selectedRestaurant.id ? selectedRestaurant : r
+      );
+      saveRestaurants(updatedRestaurants);
+      setIsEditDialogOpen(false);
+      toast.success(`"${selectedRestaurant.name}" yangilandi`);
     }
   };
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-8 space-y-6 bg-slate-50 dark:bg-[#121828] min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Restoranlar Boshqaruvi</h1>
-          <p className="text-gray-500 mt-1">Barcha restoranlar va ularning obunalarini boshqaring</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Restoranlar Boshqaruvi</h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-1">Barcha restoranlar va ularning obunalarini boshqaring</p>
         </div>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
@@ -311,9 +238,9 @@ export default function RestaurantsNew() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-4 bg-white p-4 rounded-lg border shadow-sm">
+      <div className="flex items-center gap-4 bg-white dark:bg-[#1a2332] p-4 rounded-lg border border-slate-200 dark:border-[#2a3441] shadow-sm">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500" />
           <Input
             placeholder="Restoran nomi yoki egasi bo'yicha qidirish..."
             value={searchQuery}
@@ -322,7 +249,7 @@ export default function RestaurantsNew() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="h-5 w-5 text-gray-500" />
+          <Filter className="h-5 w-5 text-slate-500 dark:text-slate-400" />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-48 h-11">
               <SelectValue placeholder="Holat bo'yicha filter" />
@@ -337,24 +264,14 @@ export default function RestaurantsNew() {
         </div>
       </div>
 
-      {/* Loading State */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center space-y-3">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="text-gray-500">Yuklanmoqda...</p>
-          </div>
-        </div>
-      )}
-
       {/* Cards Grid */}
-      {!isLoading && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredRestaurants.map((restaurant) => (
-          <Card key={restaurant.id} className="hover:shadow-lg transition-shadow">
+          <Card key={restaurant.id} className="bg-white dark:bg-[#1a2332] border-slate-200 dark:border-[#2a3441] hover:shadow-lg hover:bg-slate-50 dark:hover:bg-[#1d2c47] transition-all">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <CardTitle className="text-xl mb-2">{restaurant.name}</CardTitle>
+                  <CardTitle className="text-xl mb-2 text-slate-900 dark:text-white">{restaurant.name}</CardTitle>
                   <Badge className={`${tierColors[restaurant.tier]} border`} variant="outline">
                     {restaurant.tier === 'Basic' ? 'Oddiy' : restaurant.tier === 'Pro' ? 'Professional' : 'Premium'}
                   </Badge>
@@ -384,8 +301,8 @@ export default function RestaurantsNew() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Status */}
-              <div className="flex items-center justify-between pb-3 border-b">
-                <span className="text-sm text-gray-600">Holat:</span>
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#2a3441]">
+                <span className="text-sm text-slate-600 dark:text-slate-400">Holat:</span>
                 <Badge className={statusColors[restaurant.status]} variant="secondary">
                   {statusLabels[restaurant.status]}
                 </Badge>
@@ -394,60 +311,60 @@ export default function RestaurantsNew() {
               {/* Owner Info */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <User className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-900 font-medium">{restaurant.owner}</span>
+                  <User className="h-4 w-4 text-slate-400" />
+                  <span className="text-slate-900 dark:text-white font-medium">{restaurant.owner}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Mail className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">{restaurant.ownerEmail}</span>
+                  <Mail className="h-4 w-4 text-slate-400" />
+                  <span className="text-slate-600 dark:text-slate-400">{restaurant.ownerEmail}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <MapPin className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">{restaurant.location}</span>
+                  <MapPin className="h-4 w-4 text-slate-400" />
+                  <span className="text-slate-600 dark:text-slate-400">{restaurant.location}</span>
                 </div>
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-2 gap-3 pt-3 border-t">
+              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-200 dark:border-[#2a3441]">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
                     <DollarSign className="h-3 w-3" />
                     <span>Oylik Daromad</span>
                   </div>
-                  <p className="text-lg font-bold text-gray-900">
+                  <p className="text-lg font-bold text-slate-900 dark:text-white">
                     {restaurant.monthlyRevenue.toLocaleString()} so'm
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
                     <ShoppingCart className="h-3 w-3" />
                     <span>Buyurtmalar</span>
                   </div>
-                  <p className="text-lg font-bold text-gray-900">
+                  <p className="text-lg font-bold text-slate-900 dark:text-white">
                     {restaurant.totalOrders.toLocaleString()}
                   </p>
                 </div>
               </div>
 
               {/* Join Date */}
-              <div className="flex items-center gap-2 text-xs text-gray-500 pt-2 border-t">
+              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-[#2a3441]">
                 <Calendar className="h-3 w-3" />
                 <span>Qo'shilgan: {new Date(restaurant.joinDate).toLocaleDateString('uz-UZ')}</span>
               </div>
             </CardContent>
           </Card>
         ))}
-      </div>}
+      </div>
 
       {/* Empty State */}
       {filteredRestaurants.length === 0 && (
-        <Card className="p-12">
+        <Card className="bg-white dark:bg-[#1a2332] border-slate-200 dark:border-[#2a3441] p-12">
           <div className="text-center space-y-3">
-            <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-              <Search className="h-8 w-8 text-gray-400" />
+            <div className="mx-auto w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+              <Search className="h-8 w-8 text-slate-400" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">Hech narsa topilmadi</h3>
-            <p className="text-gray-500">Qidiruv mezonlaringizga mos restoran yo'q</p>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Hech narsa topilmadi</h3>
+            <p className="text-slate-600 dark:text-slate-400">Qidiruv mezonlaringizga mos restoran yo'q</p>
           </div>
         </Card>
       )}

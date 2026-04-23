@@ -64,21 +64,21 @@ export default function Support() {
   const resolvedTickets = tickets.filter(t => t.status === 'Resolved').length;
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-8 space-y-6 bg-slate-50 dark:bg-[#121828] min-h-screen">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Yordam va Tizim Jurnallari</h1>
-        <p className="text-gray-500 mt-1">Yordam so'rovlari va tizim holatini kuzating</p>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Yordam va Tizim Jurnallari</h1>
+        <p className="text-slate-600 dark:text-slate-400 mt-1">Yordam so'rovlari va tizim holatini kuzating</p>
       </div>
 
       {/* Ticket Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
+        <Card className="bg-white dark:bg-[#1a2332] border-slate-200 dark:border-[#2a3441] hover:bg-slate-50 dark:hover:bg-[#1d2c47] transition-all">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Ochiq So'rovlar</p>
-                <p className="text-2xl font-bold text-gray-900">{openTickets}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Ochiq So'rovlar</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{openTickets}</p>
               </div>
               <div className="p-3 rounded-lg bg-blue-50">
                 <AlertCircle className="h-6 w-6 text-blue-600" />
@@ -87,12 +87,12 @@ export default function Support() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white dark:bg-[#0f1419] border-slate-200 dark:border-[#1e2530]">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Jarayonda</p>
-                <p className="text-2xl font-bold text-gray-900">{inProgressTickets}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Jarayonda</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{inProgressTickets}</p>
               </div>
               <div className="p-3 rounded-lg bg-yellow-50">
                 <Clock className="h-6 w-6 text-yellow-600" />
@@ -101,12 +101,12 @@ export default function Support() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white dark:bg-[#0f1419] border-slate-200 dark:border-[#1e2530]">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Hal Qilindi</p>
-                <p className="text-2xl font-bold text-gray-900">{resolvedTickets}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Hal Qilindi</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{resolvedTickets}</p>
               </div>
               <div className="p-3 rounded-lg bg-green-50">
                 <CheckCircle className="h-6 w-6 text-green-600" />
@@ -124,9 +124,9 @@ export default function Support() {
         </TabsList>
 
         <TabsContent value="tickets" className="space-y-4">
-          <Card>
+          <Card className="bg-white dark:bg-[#1a2332] border-slate-200 dark:border-[#2a3441] hover:bg-slate-50 dark:hover:bg-[#1d2c47] transition-all">
             <CardHeader>
-              <CardTitle>Yordam So'rovlari</CardTitle>
+              <CardTitle className="text-slate-900 dark:text-white">Yordam So'rovlari</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -174,9 +174,9 @@ export default function Support() {
         </TabsContent>
 
         <TabsContent value="logs" className="space-y-4">
-          <Card>
+          <Card className="bg-white dark:bg-[#1a2332] border-slate-200 dark:border-[#2a3441] hover:bg-slate-50 dark:hover:bg-[#1d2c47] transition-all">
             <CardHeader>
-              <CardTitle>Tizim Holati Jurnallari</CardTitle>
+              <CardTitle className="text-slate-900 dark:text-white">Tizim Holati Jurnallari</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -185,17 +185,17 @@ export default function Support() {
                   return (
                     <div
                       key={log.id}
-                      className="flex items-start gap-3 p-3 rounded-lg border bg-white hover:bg-gray-50 transition-colors"
+                      className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 dark:border-[#2a3441] bg-white dark:bg-[#121828] hover:bg-slate-50 dark:hover:bg-[#1a2332] transition-colors"
                     >
                       <Icon className={`h-5 w-5 mt-0.5 flex-shrink-0 ${logTypeColors[log.type]}`} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
-                          <p className="text-sm font-medium text-gray-900">{log.message}</p>
+                          <p className="text-sm font-medium text-slate-900 dark:text-white">{log.message}</p>
                           <Badge variant="outline" className="flex-shrink-0">
                             {logTypeLabels[log.type]}
                           </Badge>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                           {new Date(log.timestamp).toLocaleString('uz-UZ')}
                         </p>
                       </div>
