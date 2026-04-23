@@ -6,6 +6,7 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { toast } from 'sonner';
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -24,17 +25,27 @@ export default function Login() {
 
     setIsLoading(true);
     
-    // Simulyatsiya uchun
-    setTimeout(() => {
-      if (email === 'admin@admin.uz' && password === 'admin123') {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast.error('Email yoki parol noto\'g\'ri');
+        console.error('Login error:', error);
+      } else if (data.user) {
         localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('userId', data.user.id);
         toast.success('Muvaffaqiyatli kirdingiz!');
         navigate('/');
-      } else {
-        toast.error('Email yoki parol noto\'g\'ri');
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Kirish jarayonida xatolik yuz berdi');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -96,7 +107,7 @@ export default function Login() {
             </Button>
 
             <div className="text-center text-sm text-gray-500 pt-2">
-              Demo: admin@dastyor.uz / admin123
+              Supabase orqali kirish
             </div>
           </form>
         </CardContent>

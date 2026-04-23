@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { mockRestaurants, Restaurant, RestaurantStatus } from '../../lib/mock-data';
+import { supabase } from '../../lib/supabase';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
@@ -62,7 +63,8 @@ const tierColors = {
 };
 
 export default function RestaurantsNew() {
-  const [restaurants, setRestaurants] = useState(mockRestaurants);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -76,6 +78,48 @@ export default function RestaurantsNew() {
     tier: 'Basic' as const
   });
 
+  // Supabase dan restoranlarni yuklash
+  useEffect(() => {
+    loadRestaurants();
+  }, []);
+
+  const loadRestaurants = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading restaurants:', error);
+        // Agar xatolik bo'lsa, mock data ishlatamiz
+        setRestaurants(mockRestaurants);
+        toast.error('Ma\'lumotlarni yuklashda xatolik, demo ma\'lumotlar ko\'rsatilmoqda');
+      } else if (data) {
+        // Supabase formatidan bizning formatga o'tkazish
+        const formattedData: Restaurant[] = data.map(item => ({
+          id: item.id,
+          name: item.name,
+          owner: item.owner,
+          ownerEmail: item.owner_email,
+          location: item.location,
+          joinDate: item.join_date,
+          status: item.status as RestaurantStatus,
+          tier: item.tier,
+          expiryDate: item.expiry_date,
+          monthlyRevenue: item.monthly_revenue || 0,
+          totalOrders: item.total_orders || 0
+        }));
+        setRestaurants(formattedData);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setRestaurants(mockRestaurants);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Filter restaurants
   const filteredRestaurants = restaurants.filter(restaurant => {
     const matchesSearch = restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -84,33 +128,66 @@ export default function RestaurantsNew() {
     return matchesSearch && matchesStatus;
   });
 
-  const handleAddRestaurant = () => {
+  const handleAddRestaurant = async () => {
     if (!newRestaurant.name || !newRestaurant.owner || !newRestaurant.ownerEmail || !newRestaurant.location) {
       toast.error('Iltimos, barcha maydonlarni to\'ldiring');
       return;
     }
 
-    const restaurant: Restaurant = {
-      id: `${restaurants.length + 1}`,
-      ...newRestaurant,
-      joinDate: new Date().toISOString().split('T')[0],
-      status: 'Active',
-      expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      monthlyRevenue: 0,
-      totalOrders: 0
-    };
-    setRestaurants([...restaurants, restaurant]);
-    setIsAddDialogOpen(false);
-    setNewRestaurant({ name: '', owner: '', ownerEmail: '', location: '', tier: 'Basic' });
-    toast.success(`"${restaurant.name}" muvaffaqiyatli qo'shildi`);
+    try {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .insert([
+          {
+            name: newRestaurant.name,
+            owner: newRestaurant.owner,
+            owner_email: newRestaurant.ownerEmail,
+            location: newRestaurant.location,
+            tier: newRestaurant.tier,
+            status: 'Active',
+            join_date: new Date().toISOString().split('T')[0],
+            expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            monthly_revenue: 0,
+            total_orders: 0
+          }
+        ])
+        .select();
+
+      if (error) {
+        console.error('Error adding restaurant:', error);
+        toast.error('Restoran qo\'shishda xatolik yuz berdi');
+      } else if (data) {
+        await loadRestaurants();
+        setIsAddDialogOpen(false);
+        setNewRestaurant({ name: '', owner: '', ownerEmail: '', location: '', tier: 'Basic' });
+        toast.success(`"${newRestaurant.name}" muvaffaqiyatli qo'shildi`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Restoran qo\'shishda xatolik yuz berdi');
+    }
   };
 
-  const handleToggleStatus = (restaurant: Restaurant) => {
+  const handleToggleStatus = async (restaurant: Restaurant) => {
     const newStatus: RestaurantStatus = restaurant.status === 'Active' ? 'Suspended' : 'Active';
-    setRestaurants(restaurants.map(r =>
-      r.id === restaurant.id ? { ...r, status: newStatus } : r
-    ));
-    toast.success(`"${restaurant.name}" ${newStatus === 'Active' ? 'faollashtirildi' : 'to\'xtatildi'}`);
+    
+    try {
+      const { error } = await supabase
+        .from('restaurants')
+        .update({ status: newStatus })
+        .eq('id', restaurant.id);
+
+      if (error) {
+        console.error('Error updating status:', error);
+        toast.error('Holatni o\'zgartirishda xatolik');
+      } else {
+        await loadRestaurants();
+        toast.success(`"${restaurant.name}" ${newStatus === 'Active' ? 'faollashtirildi' : 'to\'xtatildi'}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Holatni o\'zgartirishda xatolik');
+    }
   };
 
   const handleLoginAs = (restaurant: Restaurant) => {
@@ -124,13 +201,30 @@ export default function RestaurantsNew() {
     setIsEditDialogOpen(true);
   };
 
-  const saveEdit = () => {
-    if (selectedRestaurant) {
-      setRestaurants(restaurants.map(r =>
-        r.id === selectedRestaurant.id ? selectedRestaurant : r
-      ));
-      setIsEditDialogOpen(false);
-      toast.success(`"${selectedRestaurant.name}" yangilandi`);
+  const saveEdit = async () => {
+    if (!selectedRestaurant) return;
+
+    try {
+      const { error } = await supabase
+        .from('restaurants')
+        .update({
+          name: selectedRestaurant.name,
+          location: selectedRestaurant.location,
+          tier: selectedRestaurant.tier
+        })
+        .eq('id', selectedRestaurant.id);
+
+      if (error) {
+        console.error('Error updating restaurant:', error);
+        toast.error('Restoranni yangilashda xatolik');
+      } else {
+        await loadRestaurants();
+        setIsEditDialogOpen(false);
+        toast.success(`"${selectedRestaurant.name}" yangilandi`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Restoranni yangilashda xatolik');
     }
   };
 
@@ -243,8 +337,18 @@ export default function RestaurantsNew() {
         </div>
       </div>
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center space-y-3">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="text-gray-500">Yuklanmoqda...</p>
+          </div>
+        </div>
+      )}
+
       {/* Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {!isLoading && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredRestaurants.map((restaurant) => (
           <Card key={restaurant.id} className="hover:shadow-lg transition-shadow">
             <CardHeader className="pb-3">
@@ -333,7 +437,7 @@ export default function RestaurantsNew() {
             </CardContent>
           </Card>
         ))}
-      </div>
+      </div>}
 
       {/* Empty State */}
       {filteredRestaurants.length === 0 && (
